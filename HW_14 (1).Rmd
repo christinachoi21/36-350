@@ -1,0 +1,135 @@
+---
+title: "HW: Week 14"
+author: "36-350 -- Statistical Computing"
+date: "Week 14 -- Spring 2022"
+output:
+  pdf_document:
+    toc: no
+  html_document:
+    toc: true
+    toc_float: true
+    theme: spacelab
+---
+
+Name: christina choi
+
+Andrew ID: gawonc
+
+You must submit **your own** lab as a knitted PDF file on Gradescope.
+
+---
+
+
+```
+create table new_table 
+  (player integer references more_player_stats, prl numeric, position text);
+insert into new_table (player, prl) 
+  (select id, round(per - 67*va/(gp * minutes),1) from more_player_stats);
+update new_table set position = 'PF' where prl >= 11.3;
+update new_table set position = 'PG' where prl >= 10.8 and prl < 11.3;
+update new_table set position = 'C'  where prl >= 10.6 and prl < 10.8;
+update new_table set position = 'SG/SF' where prl < 10.6;
+```
+
+```
+alter table player_bios add column position text;
+update player_bios set position = new_table.position from new_table where id = new_table.player;
+```
+
+```
+alter table player_bios add column height_inches numeric;
+update player_bios
+   set height_inches = 12*split_part(height,'-',1)::integer + split_part(height,'-',2)::integer;
+alter table player_bios drop column height;
+alter table player_bios rename column height_inches to height;
+```
+
+Run the above chunks of `postgres` code prior to starting Q1 below (and make sure they run with no problems).
+
+---
+
+## Question 1
+*(20 points)*
+
+Create a table called `players` with the following columns:
+
+- `id`: a serial primary key
+- `firstname` and `lastname`: both text
+- `position`: a string as defined in HW 13
+- `age`, `height` (in inches, as determined in HW 13), and `weight`: all as integers with checks that the values are greater than zero
+- `college`, `country`, `draft_year`, `draft_round`, and `draft_number`: all as text
+
+These data are available in `player_bios`. Use `create` and `insert` with `select` to copy these data to `players`. Show the first five first and last names.
+```
+
+create table players (
+  id serial primary key,
+  firstname text,
+  lastname text,
+  position text,
+  age,
+  height,
+  weight,
+  college,
+  country,
+  draft_year,
+  draft_round,
+  draft_number
+  
+);
+
+
+
+```
+
+## Question 2
+*(20 points)*
+
+Now you will construct a table of player statistics for the 2015-16 NBA season, called `stats`. The columns:
+
+- `id`: a serial primary key
+- `player`: a foreign integer key that references the `players` table (when inserting, you would select players.id as player)
+- `team`: a `char(3)`
+- `gp`: an integer
+- `minutes`, `fga`, `fgpct`, `tppct`, `fta`, `ftpct`, `ast`, `tov`, `pts`, `tovr`, `ewa`: all numeric
+
+Some of these quantities are in `player_stats`, some are in `more_player_stats`, and some are in `players`. To build the table, you will chain two `join`s together: you will join `player_stats` and `players` using first *and* last names, and further join `more_player_states` using id's.
+
+When you are all done, display the first three rows of your new table.
+```
+FILL ME IN
+```
+
+## Question 3
+*(20 points)*
+
+List the names and average points per game of the top 25 scorers, in descending order of average points per game, restricting your attention to those players who averaged at least eight minutes per game and who played at least 10 games.
+```
+FILL ME IN
+```
+
+## Question 4
+*(20 points)*
+
+Rank teams according to average points per game over all players on the team who played at least 24 minutes per game on average. Round the output average to two decimal places.
+```
+FILL ME IN
+```
+
+## Question 5
+*(20 points)*
+
+List the top five players (in order last name, then first name) with the highest minutes per game but a negative "estimated wins added" to the team (`ewa`).
+```
+FILL ME IN
+```
+
+## Question 6
+*(20 points)*
+
+List the last name, first name, position, points per game, and the average points per game of players with the same position in each row. Show the results in order of position first, and then by descending points per game. Computing the average described above requires the use of an `over` clause and a `partition by` window function: put `over (partition by players.position)` before the `from` clause. Round the average points to two decimal places. Limit your query to players who play more than 24 minutes per game. Show the first 10 rows of your resulting table. The fifth column will all have the same numbers: this is, e.g., the average points per game for all players listed as centers. (That's what it is in my output: I get an average of 13.27 points per game for centers.)
+```
+FILL ME IN
+```
+
+And with that, you are done.

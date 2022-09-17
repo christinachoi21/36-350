@@ -1,0 +1,69 @@
+---
+title: "HW7: question 1"
+author: "36-226: Introduction to Statistical Inference"
+date: "Spring 2022"
+output: html_document
+---
+
+To see the instructions below properly coded, it might help for you to knit this document now.
+
+In class, you have learned about confidence intervals. A primary difference between confidence intervals and point estimates is that the former come with advertised probabilistic guarantees: if $1-\alpha = 0.95$, then if you were to repeat the data-generating process an infinite number of times, you would see that 95% of the confidence intervals you generate would overlap the true value of the parameter.
+
+The key word above is "advertised." In case you are using an approximation for your confidence interval, the actual overlap percentange can differ.
+
+Let's introduce a new term here: instead of "overlap percentage," we say *coverage*. Below, you are going to see that the coverage of an (approximate) large-sample confidence interval is sometimes (or often...) not the stated $1-\alpha$.
+
+To complete Question 1, do the following:
+
+- insert code below for a large-sample confidence interval, keeping in mind that $V[Y] = \beta^2$, and uncomment the lines where you make the insertions; and
+- run the code chunk with values $n$ = 1, 2, 4, 8, 16, 32, 64, and 128.
+
+Transfer the printed estimated coverages to your homework sheet. Comment on them:
+
+(a) are the coverages monotonic (strictly increasing or decreasing)?
+(b) is stating 95% for the coverage generally an overestimate or underestimate for values of $n$ greater than 30?
+(c) does the coverage appear to asymptotically converge to the advertised coverage (95%)?
+The following functions might help you code your CI formula. Note: you don't need all of them.
+
+- the sum of $y_i$ is `sum(y)` (vectorization in `R` means you don't have to compute sums using a `for` loop)
+- the sum of $y_i^2$ is `sum(y^2)`
+- to multiply, use `*`, and to divide, use `/`
+- to specify the natural logarithm of $y_i$, use `log(y)`
+- to specify $e^{-y}$, use `exp(-y)`
+- you may of course combine functions: $\sum_{i=1}^n e^y$ would be `sum(exp(y))`
+
+```{r}
+k = 100000
+n = 128
+z.cutoff = abs(qnorm(0.025)) # alpha/2 for 95% CI
+true.value.in.CI = rep(FALSE,k)
+beta.true = 1
+
+
+for ( i in 1:k ) {
+  data = rexp(n,rate=1/beta.true)
+ CI.lo = mean(data) - ( z.cutoff*((mean(data))/sqrt(n)) )
+ CI.hi = mean(data) + ( z.cutoff*((mean(data))/sqrt(n)) )
+
+ if ( CI.lo < beta.true && CI.hi > beta.true ) true.value.in.CI[i] = TRUE
+}
+
+# Note: TRUE == 1 and FALSE == 0, so summing a logical variable is equivalent to asking for the number of TRUEs
+100 * sum(true.value.in.CI) / length(true.value.in.CI) # is this 100*(1-alpha)?
+
+
+
+(.95*200 )+(.05*0)
+(.75*240 )
+(.75*100)+(.25*96)
+(.75*240 )+(.25*80)
+```
+
+
+
+
+
+
+
+
+
