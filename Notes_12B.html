@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="36-350 – Statistical Computing" />
+  <meta name="font-size-adjustment" content="-1"/>
+  <title>Working With CRUD: Creating and Populating Tables</title>
+  <style type="text/css">
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+              </style>
+  <script src="Notes_12B_files/header-attrs-2.11/header-attrs.js"></script>
+  <link href="Notes_12B_files/slidy-2/styles/slidy.css" rel="stylesheet" />
+  <script src="Notes_12B_files/slidy-2/scripts/slidy.js"></script>
+  <script src="Notes_12B_files/slidy_shiny-1/slidy_shiny.js"></script>
+</head>
+<body>
+<div class="slide titlepage">
+  <h1 class="title">Working With CRUD: Creating and Populating
+Tables</h1>
+  <p class="author">
+36-350 – Statistical Computing
+  </p>
+  <p class="date">Week 12 – Spring 2022</p>
+</div>
+<div id="but-i-dont-like-crud" class="slide section level1">
+<h1>But I Don’t Like CRUD</h1>
+<p>No, no. CRUD is an acronym that stands for four basic table
+operations:</p>
+<ul>
+<li><p><b>C</b>reate (meaning for us: <code>create</code> and
+<code>insert</code>)</p></li>
+<li><p><b>R</b>ead (meaning <code>select</code>)</p></li>
+<li><p><b>U</b>pdate (meaning <code>update table</code> and <code>alter
+table</code>)</p></li>
+<li><p><b>D</b>elete (meaning <code>delete from</code> and <code>drop
+table</code>)</p></li>
+</ul>
+<p>We will discuss the C, the U, and the D in this notes set, and the R
+next week…</p>
+</div>
+<div id="creating-a-table" class="slide section level1">
+<h1>Creating a Table</h1>
+<p>Assuming you do not read in a table from a previously existing file
+via use of <code>\i</code>, you’ll need to create and populate a table
+yourself.</p>
+<p>The command is</p>
+<pre><code>create table &lt;name&gt; 
+(&lt;column 1&gt; &lt;type 1&gt; &lt;constraint 1&gt;, ... , &lt;multi-column constraint(s)&gt;);</code></pre>
+<p>Here is a simple example. Refer to the previous set of notes for
+documentation about the data types:</p>
+<pre><code>create table products (
+  product_id serial,
+  label text,
+  price money,
+  discount money,
+  inventory integer
+);</code></pre>
+<p>This creates a five-column table that contains a label for each
+product, its price, any current discount on that price, and the current
+number of each product available.</p>
+<p>Note that the <code>product_id</code> column contains data of type
+<code>serial</code>. This, as was stated in the last set of notes, is a
+data type that represents an auto-incrementing integer. Thus, when we
+first insert a row into this table, <code>product_id</code> will take on
+the value <code>1</code>, then when we insert the next row it will take
+on the value <code>2</code>, etc., etc. This provides a unique
+identifier for each row. Instead of just</p>
+<pre><code>product_id serial,</code></pre>
+<p>we could specify this as</p>
+<pre><code>product_id serial primary key,</code></pre>
+<p>to make it clear that this column has the unique identifier for each
+product in the table. As we will see later, this key can be linked to
+from other tables as a so-called “foreign key” (since it is defined
+outside of those other tables…hence it is “foreign” to them).</p>
+</div>
+<div id="adding-constraints" class="slide section level1">
+<h1>Adding Constraints</h1>
+<p>When creating a <code>SQL</code> table, we may want to add
+constraints. For instance, a product’s price should not be less than $0,
+and each product should be labeled in a unique manner. Here, we recreate
+the table defined on the previous page.</p>
+<pre><code>create table products_with_constraints (
+  product_id serial primary key,
+  label text unique not null check (char_length(label) &gt; 0),
+  price money check (price &gt;= 0::money),
+  discount money default 0.0 check (discount &gt;= 0::money),
+  inventory integer default 0 check (inventory &gt;= 0),
+  check (price &gt; discount)
+);</code></pre>
+<p>There are many things to note here:</p>
+<ol style="list-style-type: decimal">
+<li>There is a <code>unique</code> specifier that ensures that every
+inserted value is unique.</li>
+<li>There is a <code>not null</code> specifier that indicates you
+<em>have</em> to insert a value for this variable when inserting a new
+row into the table.</li>
+<li>There is a <code>check</code> specifier:</li>
+</ol>
+<pre><code>check (&lt;relationship&gt;)</code></pre>
+<ol start="4" style="list-style-type: decimal">
+<li>There is a <code>default</code> specifier that is implemented when
+you do <em>not</em> insert a value.</li>
+<li><code>::</code> is used for casting values into types (e.g.,
+<code>0::money</code> casts the integer 0 to be of type
+<code>money</code>).</li>
+<li>You can specify checks of one column’s values versus anothers (e.g.,
+the price should be larger than the discount).</li>
+</ol>
+</div>
+<div id="inserting-values" class="slide section level1">
+<h1>Inserting Values</h1>
+<p>There are a few ways to insert data into a <code>SQL</code> table.
+We’ll show how to do it row-by-row here, and then utilize
+<code>select</code> to create bigger tables next week.</p>
+<p>To populate the table one row at a time:</p>
+<pre><code>insert into &lt;name&gt; (&lt;column i&gt;,&lt;column j&gt;,...) values
+  (&lt;value i&gt;,&lt;value j&gt;,...),
+  ...
+  (&lt;value i&gt;,&lt;value j&gt;,...);</code></pre>
+<p>If you leave out a column, then the data there will be missing (and
+can be added later with <code>update table</code>) or will have a
+default value. Note that any column with data type <code>serial</code>
+has default behavior: it will auto-increment).</p>
+<pre><code>insert into products_with_constraints (label,price,discount,inventory) values
+  (&#39;kirk action figure&#39;,50,10,13),
+  (&#39;spock action figure&#39;,40,5,22);</code></pre>
+<p>The <code>product_id</code>, being of type <code>serial</code>, will
+take on the values 1, then 2.</p>
+<p>If you leave out the <code>(\&lt;column i\&gt;,\&lt;column
+j\&gt;,...)</code> part, then <code>postgres</code> will simply assume
+that you will be entering values for all columns (in order…so the first
+value will go into the first column, etc.). For instance:</p>
+<pre><code>insert into products_with_constraints values
+  (3,&#39;uhura action figure&#39;,150,30,3),
+  (4,&#39;khan action figure&#39;,80,5,12);</code></pre>
+<p>To look at all columns in your table, do</p>
+<pre><code>select * from products_with_constraints;
+ product_id |        label        |  price  | discount | inventory 
+------------+---------------------+---------+----------+-----------
+          1 | kirk action figure  |  $50.00 |   $10.00 |        13
+          2 | spock action figure |  $40.00 |    $5.00 |        22
+          3 | uhura action figure | $150.00 |   $30.00 |         3
+          4 | khan action figure  |  $80.00 |    $5.00 |        12
+(4 rows)</code></pre>
+</div>
+<div id="updating-table-values" class="slide section level1">
+<h1>Updating Table Values</h1>
+<p>The <code>update</code> command allows us to modify values in table
+cells.</p>
+<pre><code>update &lt;name&gt;
+   set &lt;column1&gt; = &lt;new value 1&gt;,
+   set &lt;column2&gt; = &lt;new value 2&gt;,
+   ...
+   where &lt;row condition&gt;;</code></pre>
+<p>Think of the <code>where &lt;row condition&gt;</code> as being like a
+call to the <code>which()</code> function in <code>R</code>: in it, you
+set a range of values for one of the table columns, and thereby select
+which rows to update.</p>
+<pre><code>update products_with_constraints
+  set discount = 10::money
+  where price &gt;= 70::money;</code></pre>
+<p>(Note that when you look at an updated table, the serial data <em>may
+not</em> be displayed in numeric order, i.e., the rows may be
+rearranged. This is OK.)</p>
+</div>
+<div id="making-large-scale-alterations-to-a-table"
+class="slide section level1">
+<h1>Making Large-Scale Alterations to a Table</h1>
+<p>If you wish to add or delete an entire column, or rename an column,
+or change constraints, etc., you would “update” your table using
+<code>alter table</code>:</p>
+<pre><code>alter table &lt;name&gt;
+  &lt;action&gt;;</code></pre>
+<p>There are too many possible to provide a clean shorthand for them
+all. Best just to give a few examples:</p>
+<pre><code>alter table products_with_constraints
+  add column rating real check (rating &gt;= 0.0) check (rating &lt;= 5.0);
+  
+alter table products_with_constraints
+  alter column rating set default 4.0;
+  
+alter table products_with_constraints
+  rename column label to type;
+  
+alter table products_with_constraints
+  drop column inventory;</code></pre>
+<p>Etc.</p>
+</div>
+<div id="deleting-rows-and-removing-a-table-entirely"
+class="slide section level1">
+<h1>Deleting Rows and Removing a Table Entirely</h1>
+<p>To remove one or more entries from a table:</p>
+<pre><code>delete from &lt;name&gt;
+  where &lt;condition&gt;;</code></pre>
+<p>(Be careful! If you leave out the <code>where</code> clause, then
+<b>all</b> entries are deleted.)</p>
+<p>To remove a table in its entirety:</p>
+<pre><code>drop table &lt;name&gt;;</code></pre>
+<p>To check that the table is removed, look for it in the listing
+produced by issuing the <code>\d</code> command.</p>
+</div>
+
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+</body>
+</html>

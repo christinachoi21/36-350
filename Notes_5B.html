@@ -1,0 +1,313 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="36-350 – Statistical Computing" />
+  <meta name="font-size-adjustment" content="-1"/>
+  <title>Tools for Web Scraping</title>
+  <style type="text/css">
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+            pre > code.sourceCode { white-space: pre; position: relative; }
+            pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+            pre > code.sourceCode > span:empty { height: 1.2em; }
+            .sourceCode { overflow: visible; }
+            code.sourceCode > span { color: inherit; text-decoration: inherit; }
+            div.sourceCode { margin: 1em 0; }
+            pre.sourceCode { margin: 0; }
+            @media screen {
+            div.sourceCode { overflow: auto; }
+            }
+            @media print {
+            pre > code.sourceCode { white-space: pre-wrap; }
+            pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+            }
+            pre.numberSource code
+              { counter-reset: source-line 0; }
+            pre.numberSource code > span
+              { position: relative; left: -4em; counter-increment: source-line; }
+            pre.numberSource code > span > a:first-child::before
+              { content: counter(source-line);
+                position: relative; left: -1em; text-align: right; vertical-align: baseline;
+                border: none; display: inline-block;
+                -webkit-touch-callout: none; -webkit-user-select: none;
+                -khtml-user-select: none; -moz-user-select: none;
+                -ms-user-select: none; user-select: none;
+                padding: 0 4px; width: 4em;
+                color: #aaaaaa;
+              }
+            pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+            div.sourceCode
+              {   }
+            @media screen {
+            pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+            }
+            code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+            code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+            code span.at { color: #7d9029; } /* Attribute */
+            code span.bn { color: #40a070; } /* BaseN */
+            code span.bu { } /* BuiltIn */
+            code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+            code span.ch { color: #4070a0; } /* Char */
+            code span.cn { color: #880000; } /* Constant */
+            code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+            code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+            code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+            code span.dt { color: #902000; } /* DataType */
+            code span.dv { color: #40a070; } /* DecVal */
+            code span.er { color: #ff0000; font-weight: bold; } /* Error */
+            code span.ex { } /* Extension */
+            code span.fl { color: #40a070; } /* Float */
+            code span.fu { color: #06287e; } /* Function */
+            code span.im { } /* Import */
+            code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+            code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+            code span.op { color: #666666; } /* Operator */
+            code span.ot { color: #007020; } /* Other */
+            code span.pp { color: #bc7a00; } /* Preprocessor */
+            code span.sc { color: #4070a0; } /* SpecialChar */
+            code span.ss { color: #bb6688; } /* SpecialString */
+            code span.st { color: #4070a0; } /* String */
+            code span.va { color: #19177c; } /* Variable */
+            code span.vs { color: #4070a0; } /* VerbatimString */
+            code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+          </style>
+  <style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <script src="Notes_5B_files/header-attrs-2.11/header-attrs.js"></script>
+  <link href="Notes_5B_files/slidy-2/styles/slidy.css" rel="stylesheet" />
+  <script src="Notes_5B_files/slidy-2/scripts/slidy.js"></script>
+  <script src="Notes_5B_files/slidy_shiny-1/slidy_shiny.js"></script>
+</head>
+<body>
+<div class="slide titlepage">
+  <h1 class="title">Tools for Web Scraping</h1>
+  <p class="author">
+36-350 – Statistical Computing
+  </p>
+  <p class="date">Week 5 – Spring 2022</p>
+</div>
+<div id="important-introductory-note" class="slide section level1">
+<h1>Important Introductory Note</h1>
+<p>There do not necessarily exist functions that scrape web sites for
+you and do everything that needs to be done so as to extract the
+information you want.</p>
+<p>There <strong>are</strong> functions that help extract blocks of text
+from web sites . . . but you will almost always have to apply
+regex-related string manipulation tools to convert the output of these
+functions to something that you actually want.</p>
+<p>In short: web scraping is <em>not</em> a black-box exercise . . .</p>
+</div>
+<div id="for-instance-you-will-need-to-know-some-html"
+class="slide section level1">
+<h1>For Instance, You Will Need to Know Some HTML</h1>
+<center>
+<img src="http://www.stat.cmu.edu/~mfarag/350/view_source.png"
+width="500" />
+</center>
+<p><br></p>
+<center>
+<img src="http://www.stat.cmu.edu/~mfarag/350/html_nodes.png"
+width="500" />
+</center>
+</div>
+<div id="extraction-via-rvest" class="slide section level1">
+<h1>Extraction via rvest</h1>
+<p>The <code>rvest</code> library is used to extract text and tables.
+The primary functions that you will use are</p>
+<ul>
+<li><code>read_html()</code>: read in the web page</li>
+<li><code>html_nodes()</code>: extract all text (including HTML code)
+defined by node boundaries</li>
+<li><code>html_text()</code>: extract the text between the node
+boundaries</li>
+<li><code>html_table()</code>: extract tabular information</li>
+</ul>
+<p>Note that <code>rvest</code> is not the only package you could use.
+Another often-used package is <code>XML</code>. If a combination of
+<code>rvest</code> and string manipulation doesn’t easily get you what
+you want, then definitely explore the Internet (and StackOverflow) to
+see if other packages exists that will meet your needs.</p>
+<p>For more information, see, e.g., <em>Data Wrangling with R</em> by
+Bradley Boehmke and <em>XML and Web Technologies for Data Sciences with
+R</em> by Deborah Nolan and Duncan Temple Lang, both of which are
+available online via the CMU library.</p>
+</div>
+<div id="example-pittsburgh-industries" class="slide section level1">
+<h1>Example: Pittsburgh Industries</h1>
+<center>
+<img src="http://www.stat.cmu.edu/~mfarag/350/pgh_source.png"
+width="800" />
+</center>
+<p>Your goal: to extract the paragraphs associated with “Major
+Industries and Commercial Activity”. We note that the header is defined
+via an <code>&lt;h2&gt;</code> node, and the text with
+<code>&lt;p&gt;</code> nodes. The first words are “The southwestern
+Pennsylvania region” and there are five paragraphs in all.</p>
+</div>
+<div id="example-pittsburgh-industries-1" class="slide section level1">
+<h1>Example: Pittsburgh Industries</h1>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">suppressMessages</span>(<span class="fu">library</span>(rvest))</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>page <span class="ot">=</span> <span class="fu">read_html</span>(<span class="st">&quot;https://www.encyclopedia.com/places/united-states-and-canada/us-political-geography/pittsburgh&quot;</span>)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>page <span class="sc">%&gt;%</span> <span class="fu">html_nodes</span>(<span class="st">&quot;p&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">html_text</span>() <span class="sc">%&gt;%</span> <span class="fu">head</span>()</span></code></pre></div>
+<pre><code>## [1] &quot;&quot;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 
+## [2] &quot;The southwestern Pennsylvania region, especially the city of Pittsburgh, showed great resiliency and resourcefulness in shifting from an industrial economy to one based on health care, research, hospitality and tourism through the 1990s. Nevertheless, the local economy mirrored the national recession for various reasons following the events of September 11, 2001. U.S. Airways, a major employer, suffered serious losses from decreased travel due to fear or terrorism and the SARS (Severe Acute Respiratory Syndrome) epidemic. Although U.S. Airways came out of bankruptcy in 2003, it cut more than 300 jobs and reduced service by about a third in 2004; Pittsburgh, which had once been the airline&#39;s largest hub, was reduced in status and Pittsburgh International Airport lost jobs to U.S. Airway&#39;s other hub cities such as Philadelphia and Charlotte. In January 2005, Southwest Airlines, the nation&#39;s largest discount carrier and sixth largest airline, announced it would start service at Pittsburgh International Airport in May, helping to fill the gap left by the loss of leases by U.S. Airways. Local officials are also trying to lure JetBlue, Frontier, and Spirit.&quot;
+## [3] &quot;Losses in manufacturing jobs were not completely replaced by high tech jobs, as the latter account for only about six percent of jobs in the Pittsburgh MSA. Another reason for loss of jobs and the region&#39;s general downward economic trend is that Pittsburgh has one of the highest corporate tax rates in the nation. Not only do high taxes increase the cost of production for companies, they also discourage new businesses from locating in the area and may force established businesses to relocate to places with more favorable tax structures. The City of Pittsburgh was forced to file for financially distressed status under Pennsylvania&#39;s Act 47 in December of 2004. In the wake of this alternative to bankruptcy, the state Department of Community and Economic Development appointed a recovery team to compile a five year plan for economic recovery for the city. Financial analysts are cautiously optimistic as the unemployment rate seems to have peaked at 6.8 percent in January of 2003 and has come back down to 4.8 percent in April of 2005.&quot;                                                                                                                              
+## [4] &quot;By far, the largest employment sector for the Pittsburgh area is in health, educational, and social services. Though heavy manufacturing continues to play a part, it employs only 12.3 percent of the work force as of May 2005. Health care, construction, and education all added jobs in 2004. Financial analysts predict continued modest growth in 2005, with finance, business services, and health care again providing key support. Research is now the third largest industry; the Pittsburgh area is home to 150 laboratories and over 7,500 scientists and engineers. Service, hospitality, and tourism jobs are growing fast as well, adding more than 10,000 jobs in these sectors since 1994, and 5,400 jobs in May 2005 alone. Education and state government employment declined slightly during that same month.&quot;                                                                                                                                                                                                                                                                                                                                                                               
+## [5] &quot;Film making is another emerging industry. Major motion pictures made in Pittsburgh include the original Angels in the Outfield, Night of the Living Dead, The Deer Hunter, Flashdance, Gung Ho, The Silence of the Lambs, Lorenzo&#39;s Oil, Hoffa, Groundhog Day, The Wonder Boys, and The Mothman Prophecies. Overall, the size of the labor force and the number of jobs, as defined by the Commonwealth of Pennsylvania, have both increased during the first half of 2005 resulting in a slightly lowered unemployment rate.&quot;                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    
+## [6] &quot;Items and goods produced: fabricated metal products, primary metals, glass products, machinery, food and related products, medical equipment, chemicals, plastics, electronics, software, robotics&quot;</code></pre>
+<p>OK, this has pretty much what we want…</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>page <span class="sc">%&gt;%</span> <span class="fu">html_nodes</span>(<span class="st">&quot;p&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">html_text</span>() <span class="sc">%&gt;%</span> <span class="fu">head</span>() <span class="sc">%&gt;%</span> .[<span class="fu">c</span>(<span class="dv">2</span><span class="sc">:</span><span class="dv">6</span>)] <span class="sc">%&gt;%</span> <span class="fu">paste</span>(.,<span class="at">collapse=</span><span class="st">&quot;</span><span class="sc">\n\n</span><span class="st">&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">cat</span>()</span></code></pre></div>
+<pre><code>## The southwestern Pennsylvania region, especially the city of Pittsburgh, showed great resiliency and resourcefulness in shifting from an industrial economy to one based on health care, research, hospitality and tourism through the 1990s. Nevertheless, the local economy mirrored the national recession for various reasons following the events of September 11, 2001. U.S. Airways, a major employer, suffered serious losses from decreased travel due to fear or terrorism and the SARS (Severe Acute Respiratory Syndrome) epidemic. Although U.S. Airways came out of bankruptcy in 2003, it cut more than 300 jobs and reduced service by about a third in 2004; Pittsburgh, which had once been the airline&#39;s largest hub, was reduced in status and Pittsburgh International Airport lost jobs to U.S. Airway&#39;s other hub cities such as Philadelphia and Charlotte. In January 2005, Southwest Airlines, the nation&#39;s largest discount carrier and sixth largest airline, announced it would start service at Pittsburgh International Airport in May, helping to fill the gap left by the loss of leases by U.S. Airways. Local officials are also trying to lure JetBlue, Frontier, and Spirit.
+## 
+## Losses in manufacturing jobs were not completely replaced by high tech jobs, as the latter account for only about six percent of jobs in the Pittsburgh MSA. Another reason for loss of jobs and the region&#39;s general downward economic trend is that Pittsburgh has one of the highest corporate tax rates in the nation. Not only do high taxes increase the cost of production for companies, they also discourage new businesses from locating in the area and may force established businesses to relocate to places with more favorable tax structures. The City of Pittsburgh was forced to file for financially distressed status under Pennsylvania&#39;s Act 47 in December of 2004. In the wake of this alternative to bankruptcy, the state Department of Community and Economic Development appointed a recovery team to compile a five year plan for economic recovery for the city. Financial analysts are cautiously optimistic as the unemployment rate seems to have peaked at 6.8 percent in January of 2003 and has come back down to 4.8 percent in April of 2005.
+## 
+## By far, the largest employment sector for the Pittsburgh area is in health, educational, and social services. Though heavy manufacturing continues to play a part, it employs only 12.3 percent of the work force as of May 2005. Health care, construction, and education all added jobs in 2004. Financial analysts predict continued modest growth in 2005, with finance, business services, and health care again providing key support. Research is now the third largest industry; the Pittsburgh area is home to 150 laboratories and over 7,500 scientists and engineers. Service, hospitality, and tourism jobs are growing fast as well, adding more than 10,000 jobs in these sectors since 1994, and 5,400 jobs in May 2005 alone. Education and state government employment declined slightly during that same month.
+## 
+## Film making is another emerging industry. Major motion pictures made in Pittsburgh include the original Angels in the Outfield, Night of the Living Dead, The Deer Hunter, Flashdance, Gung Ho, The Silence of the Lambs, Lorenzo&#39;s Oil, Hoffa, Groundhog Day, The Wonder Boys, and The Mothman Prophecies. Overall, the size of the labor force and the number of jobs, as defined by the Commonwealth of Pennsylvania, have both increased during the first half of 2005 resulting in a slightly lowered unemployment rate.
+## 
+## Items and goods produced: fabricated metal products, primary metals, glass products, machinery, food and related products, medical equipment, chemicals, plastics, electronics, software, robotics</code></pre>
+<p><code>.[c(2:6])]</code> means “extract lines 2 through 6.” The
+<code>paste()</code> function call says “paste all the lines together
+into a single character string, but put paragraph breaks between the
+lines (which are actually paragraphs).”</p>
+</div>
+<div id="example-pittsburgh-employers" class="slide section level1">
+<h1>Example: Pittsburgh Employers</h1>
+<div class="sourceCode" id="cb5"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>page <span class="ot">=</span> <span class="fu">read_html</span>(<span class="st">&quot;https://www.encyclopedia.com/places/united-states-and-canada/us-political-geography/pittsburgh&quot;</span>)</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>(<span class="at">df =</span> page <span class="sc">%&gt;%</span> <span class="fu">html_nodes</span>(<span class="st">&quot;table&quot;</span>) <span class="sc">%&gt;%</span> .[<span class="dv">1</span>] <span class="sc">%&gt;%</span> <span class="fu">html_table</span>())  <span class="co"># .[1] = &quot;extract the first table&quot;</span></span></code></pre></div>
+<pre><code>## [[1]]
+## # A tibble: 15 x 2
+##    X1                                 X2                 
+##    &lt;chr&gt;                              &lt;chr&gt;              
+##  1 Largest county employers           Number of employees
+##  2 UPMC Health Systems                26,700             
+##  3 U.S. Government                    20,400             
+##  4 Commonwealth of Pennsylvania       15,900             
+##  5 West Penn Allegheny Health Systems 10,200             
+##  6 University of Pittsburgh           10,100             
+##  7 Mellon Financial Corp.             8,404              
+##  8 PNC Financial Services Group, Inc. 6,959              
+##  9 Allegheny County                   6,695              
+## 10 USX Corp.                          6,300              
+## 11 Giant Eagle, Inc.                  5,700              
+## 12 Highmark Blue Cross Blue Shield    5,600              
+## 13 Eat&#39;n&#39; Park Hospitality Group      4,600              
+## 14 Verizon Communications             4,400              
+## 15 USAirways Group, Inc.              4,000</code></pre>
+<p>The output from <code>html_table()</code> is a list of tables.</p>
+<p>Notice an issue? The column headers are given as the first row of the
+table. (And the numbers are actually character strings with commas.) We
+need to clean up a bit:</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>new.df <span class="ot">=</span> df[[<span class="dv">1</span>]]</span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(new.df) <span class="ot">=</span> new.df[<span class="dv">1</span>,]</span></code></pre></div>
+<pre><code>## Warning: The `value` argument of `names&lt;-` must be a character vector as of
+## tibble 3.0.0.</code></pre>
+<div class="sourceCode" id="cb9"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>new.df <span class="ot">=</span> new.df[<span class="sc">-</span><span class="dv">1</span>,]</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">rownames</span>(new.df) <span class="ot">=</span> <span class="fu">as.character</span>(<span class="dv">1</span><span class="sc">:</span><span class="fu">nrow</span>(new.df))</span></code></pre></div>
+<pre><code>## Warning: Setting row names on a tibble is deprecated.</code></pre>
+<div class="sourceCode" id="cb11"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> <span class="fu">sapply</span>(new.df[,<span class="dv">2</span>],<span class="cf">function</span>(x){<span class="fu">gsub</span>(<span class="st">&quot;,&quot;</span>,<span class="st">&quot;&quot;</span>,x)})</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>new.df[,<span class="dv">2</span>] <span class="ot">=</span> <span class="fu">as.numeric</span>(y)</span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>new.df</span></code></pre></div>
+<pre><code>## # A tibble: 14 x 2
+##    `Largest county employers`         `Number of employees`
+##    &lt;chr&gt;                                              &lt;dbl&gt;
+##  1 UPMC Health Systems                                26700
+##  2 U.S. Government                                    20400
+##  3 Commonwealth of Pennsylvania                       15900
+##  4 West Penn Allegheny Health Systems                 10200
+##  5 University of Pittsburgh                           10100
+##  6 Mellon Financial Corp.                              8404
+##  7 PNC Financial Services Group, Inc.                  6959
+##  8 Allegheny County                                    6695
+##  9 USX Corp.                                           6300
+## 10 Giant Eagle, Inc.                                   5700
+## 11 Highmark Blue Cross Blue Shield                     5600
+## 12 Eat&#39;n&#39; Park Hospitality Group                       4600
+## 13 Verizon Communications                              4400
+## 14 USAirways Group, Inc.                               4000</code></pre>
+</div>
+
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+</body>
+</html>

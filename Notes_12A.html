@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="36-350 – Statistical Computing" />
+  <meta name="font-size-adjustment" content="-1"/>
+  <title>Relational Databases and Postgres</title>
+  <style type="text/css">
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+              </style>
+  <script src="Notes_12A_files/header-attrs-2.11/header-attrs.js"></script>
+  <link href="Notes_12A_files/slidy-2/styles/slidy.css" rel="stylesheet" />
+  <script src="Notes_12A_files/slidy-2/scripts/slidy.js"></script>
+  <script src="Notes_12A_files/slidy_shiny-1/slidy_shiny.js"></script>
+</head>
+<body>
+<div class="slide titlepage">
+  <h1 class="title">Relational Databases and Postgres</h1>
+  <p class="author">
+36-350 – Statistical Computing
+  </p>
+  <p class="date">Week 12 – Spring 2022</p>
+</div>
+<div id="context" class="slide section level1">
+<h1>Context</h1>
+<ul>
+<li><p>A relational database (or RDB) is a structure for organizing
+information that one may think of initially as a supercharged version of
+a data frame. (The word “relational” does not actually indicate that
+relationships can exist between separate units in your database. It
+actually has to do with the concept of <i>relational algebra</i>, first
+proposed <a
+href="http://www.seas.upenn.edu/~zives/03f/cis550/codd.pdf">in this
+paper by E. F. Codd</a>.)</p></li>
+<li><p>In an RDB, the basic unit of data storage is the <em>table</em>
+(or <em>relation</em>). Rows are rows, but sometimes dubbed
+<em>tuples</em> or <em>records</em>, and columns are sometimes dubbed
+<em>attributes</em>. (<em>Fields</em> are specific cells within a given
+row.)</p></li>
+<li><p>RDBs come with performance guarantees, dubbed <a
+href="http://www.orafaq.com/wiki/ACID">ACID</a>.</p></li>
+<li><p>When designing an RDB, a key goal is to eliminate redundancy by
+having many tables that are linked via <i>foreign keys</i>. For
+instance, if you want to construct an RDB having information about
+movies, actors, and studios (where, e.g., a movie is produced by a
+studio and stars an actor), it makes the most sense to split the
+information cleanly between interlinked tables.</p></li>
+<li><p>RDBs are commonly manipulated and queried using <code>SQL</code>:
+Structured Query Language.</p></li>
+</ul>
+</div>
+<div id="postgres" class="slide section level1">
+<h1>Postgres</h1>
+<ul>
+<li><p>There are many implementations of <code>SQL</code> (SEE-kwule):
+<code>Oracle</code>, <code>MySQL</code>, <code>SQLite</code>,
+etc.</p></li>
+<li><p>In this class, we will make use of <a
+href="https://www.postgresql.org/">PostgreSQL</a>, or more simply
+<code>Postgres</code>. It is open source, with Mac, Windows, and Linux
+versions available. You should download and install it!</p></li>
+<li><p><code>Postgres</code> will set up a server on your machine. When
+you install <code>Postgres</code>, a superuser account “postgres” will
+be set up, with a password specified by you. Make this a good one, i.e.,
+not just “postgres.” (That’s because hackers like to look for lazily set
+up postgres accounts.)</p></li>
+<li><p>When you start up postgres for the first time (meaning: run the
+SQL Shell, or <code>psql</code>…or by typing <code>psql -U
+postgres</code> in a [Mac] terminal window), you will see something like
+this:</p></li>
+</ul>
+<center>
+<img src="http://www.stat.cmu.edu/~mfarag/350/postgres.png"
+width="500" />
+</center>
+<p>(Note that you can run code within the <code>pgAdmin 4</code> program
+that may have come packaged with your version of <code>postgres</code>,
+but I find the SQL shell to be more straightforward. Also note that the
+interface may differ for Windows; if you are a Windows user having
+issues, we will try to direct you to a Windows-using TA who may be able
+to help.)</p>
+<ul>
+<li><p>You should hit return to accept the defaults at each prompt, and
+provide the password at the end to get to the postgres prompt
+(<code>postgres=#</code>).</p></li>
+<li><p>If you are the only user on your machine, then it is fine to play
+around with SQL from within the <code>postgres</code> account. More
+generally, the <code>postgres</code> admin would apply the
+<code>createuser</code> command from within <code>postgres</code> to
+carve out space for you to play in.</p></li>
+<li><p>A good book to use as a reference for <code>postgres</code> is <a
+href="https://nostarch.com/practicalSQL">this one</a>.</p></li>
+</ul>
+</div>
+<div id="finding-your-way-around" class="slide section level1">
+<h1>Finding Your Way Around</h1>
+<p>I’m in! How do I…</p>
+<ul>
+<li><p>get help? <code>\h</code> for general listing, <code>\h
+&lt;command&gt;</code> for specific command (also: Google, as
+always)</p></li>
+<li><p>list the tables I have in my database? <code>\d</code></p></li>
+<li><p>read input from a <code>sql</code>-format file? <code>\i &lt;path
+to + name of file&gt;</code></p></li>
+<li><p>change directory? <code>\cd &lt;path to new
+directory&gt;</code></p></li>
+<li><p>get the heck out? <code>\q</code></p></li>
+</ul>
+<p>To list all (back)slash commands, type <code>\?</code> at the
+<code>postgres</code> prompt. (There are many!)</p>
+</div>
+<div id="tables" class="slide section level1">
+<h1>Tables</h1>
+<p>Tables are the data frames of <code>SQL</code>. But whereas
+<code>R</code> has much more than just data frames, life in
+<code>SQL</code> revolves around tables; as I am wont to say,
+“Everything in <code>SQL</code> is a table.” As an example, you cannot
+print out the value of <span class="math inline">\(\pi\)</span> unless
+it’s in a table:</p>
+<pre><code>select pi();
+        pi        
+------------------
+ 3.14159265358979
+(1 row)</code></pre>
+<p>(Here, the value of <span class="math inline">\(\pi\)</span> is being
+displayed in a one-row, one-column table, with column name
+<code>pi</code>. Don’t worry about the <code>select</code> part for now;
+we’ll cover that starting next week. Do worry about the semicolon: any
+command in <code>postgres</code> that doesn’t start with a backslash
+needs to end with a semicolon. Leaving the semicolon out is possibly the
+Number 1 Coding Error of new <code>SQL</code> users.)</p>
+</div>
+<div id="tables-1" class="slide section level1">
+<h1>Tables</h1>
+<p>We note the following about tables:</p>
+<ul>
+<li><p><strong>each table in a database represents a single
+entity</strong>;</p></li>
+<li><p>each row of a table represents <strong>one instance</strong> of
+that entity;</p></li>
+<li><p>each column of a table must have a
+<strong>name</strong>;</p></li>
+<li><p>each column of a table must have a <strong>pre-specified data
+type</strong>; and</p></li>
+<li><p>the columns in each row must satisfy any
+<strong>constraints</strong> specified with the table is
+created.</p></li>
+</ul>
+</div>
+<div id="data-types" class="slide section level1">
+<h1>Data Types</h1>
+<p>Unlike <code>R</code>, there are <em>many</em> defined data types in
+<code>SQL</code>. For documentation on those defined within
+<code>postgres</code>, see <a
+href="https://www.postgresql.org/docs/10/static/datatype.html">the
+postgres data type documentation page</a>.</p>
+<p>For our purposes, there are three categories of data types that you
+will utilize the most:</p>
+<ul>
+<li>characters;</li>
+<li>numbers; and</li>
+<li>dates/times.</li>
+</ul>
+<p>We will look at each category over the next few slides.</p>
+<p>Note that in addition to these there is a <code>boolean</code> type,
+which can take on the values <code>true</code> (or <code>yes</code> or
+<code>on</code> or <code>1</code>), <code>false</code> (or
+<code>no</code> or <code>off</code> or <code>0</code>), and
+<code>unknown</code>.</p>
+</div>
+<div id="data-types-characters" class="slide section level1">
+<h1>Data Types: Characters</h1>
+<p>There are three data types used for handling strings:</p>
+<ul>
+<li><code>char(n)</code>: fixed-length strings with <span
+class="math inline">\(n\)</span> characters, padded with blank spaces if
+necessary;</li>
+<li><code>varchar(n)</code>: variable-length strings that can have
+<em>at most</em> <span class="math inline">\(n\)</span> characters, with
+no blank-space padding; and</li>
+<li><code>text</code>: variable-length strings of arbitrary length, with
+no blank-space padding.</li>
+</ul>
+<p>One would generally use <code>char(n)</code> only when the length of
+the strings is known and constant (as would be the case for, e.g., state
+postal code abbreviations like <code>PA</code>). Otherwise,
+<code>varchar(n)</code> is preferred over <code>text</code> just because
+it effectively puts a cap on the amount of memory taken up by a
+table.</p>
+</div>
+<div id="data-types-integers" class="slide section level1">
+<h1>Data Types: Integers</h1>
+<p><code>SQL</code> provides a wide variety of data types for
+representing integers and both fixed-point and floating-point
+numbers.</p>
+<p>For integers:</p>
+<table>
+<thead>
+<tr class="header">
+<th>Data Type</th>
+<th>Storage Size</th>
+<th>Range</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>smallint</code></td>
+<td>2 bytes</td>
+<td><span class="math inline">\(-2^{15}\)</span> to <span
+class="math inline">\(2^{15}-1\)</span></td>
+</tr>
+<tr class="even">
+<td><code>integer</code></td>
+<td>4 bytes</td>
+<td><span class="math inline">\(-2^{31}\)</span> to <span
+class="math inline">\(2^{31}-1\)</span></td>
+</tr>
+<tr class="odd">
+<td><code>bigint</code></td>
+<td>8 bytes</td>
+<td><span class="math inline">\(-2^{63}\)</span> to <span
+class="math inline">\(2^{63}-1\)</span></td>
+</tr>
+</tbody>
+</table>
+<p>While most programmers will default to <code>integer</code>, for most
+purposes <code>smallint</code> is appropriate and will reduce memory
+use.</p>
+<p>There is also a special category of “auto-incrementing” integers with
+types <code>smallserial</code>, <code>serial</code>, and
+<code>bigserial</code>. These are purely positive variations on the
+integer types listed above, and are used to, e.g., provide unique labels
+for each row of a table (i.e., “keys”). We will see how
+<code>serial</code> is used later when we insert data into tables.</p>
+</div>
+<div id="data-types-fixed--and-floating-point-numbers"
+class="slide section level1">
+<h1>Data Types: Fixed- and Floating-Point Numbers</h1>
+<p>The difference between fixed- and floating-point numbers is in how
+the computer stores them in memory, and is a topic beyond the scope of
+this class. Simply note that arithmetic with floating-point numbers can
+yield inexact results, but in the vast majority of cases the slight
+inexactness has no bearing on data analysis and interpretation. (In
+<code>R</code>, <code>numeric</code> is a floating-point data type.)</p>
+<p>For fixed-point numbers, we have</p>
+<ul>
+<li><code>numeric(precision,scale)</code>: the number contains at most
+<code>precision</code> digits overall, with <code>scale</code> digits to
+the right of the decimal point. For instance, <code>147.89</code> is an
+example of a number that can be stored as data type
+<code>numeric(5,2)</code>. (Note that <code>decimal</code> is an
+alternative name for <code>numeric</code>.) The <code>numeric</code>
+data type is useful when we know that a particular number will not have
+more than a particular number of digits (e.g., rainfall in a 24-hour
+period requires at most two digits to the left of the decimal point) and
+when we want to round off to, say, the hundredths place.</li>
+</ul>
+<p>Note that there is a <code>money</code> type within <code>SQL</code>
+which is akin to <code>numeric</code> but fixes the number of digits to
+two to the right of the decimal point (and allows for symbols like
+<code>$</code> to be included with the numbers).</p>
+<p>For floating-point numbers, we have</p>
+<ul>
+<li><code>real</code>: the number is stored in 4 bytes and is precise to
+6 decimal places; and</li>
+<li><code>double precision</code>: the number is stored in 8 bytes and
+is precise to 15 decimal places.</li>
+</ul>
+</div>
+<div id="data-types-dates-and-times" class="slide section level1">
+<h1>Data Types: Dates and Times</h1>
+<p>The common data types for dates and times include:</p>
+<ul>
+<li><code>date</code>: specified as <code>YYYY-MM-DD</code>;</li>
+<li><code>time</code>: specified as <code>HH:MM:SS</code>;</li>
+<li><code>timestamp</code>: combines <code>date</code> and
+<code>time</code>;</li>
+<li><code>interval</code>: a time interval, defined in
+<code>days</code>, <code>months</code>, <code>years</code>, etc.</li>
+</ul>
+<p>A variant of <code>time</code> (and <code>timestamp</code>) is
+<code>time with time zone</code> (and <code>timestamp with time
+zone</code> or <code>timestamptz</code>). You can specify, for instance,
+<code>02:00 EST</code> or <code>04:00 -8</code> (offset from zero in
+Coordinated Universal Time or UTC) or <code>06:00 New York City</code>.
+What is stored, however, is the local time for <em>your</em> time zone,
+with the UTC offset:</p>
+<pre><code>create table tmz (
+  t timestamp with time zone
+);
+
+insert into tmz
+  values
+  (&#39;2020-05-29 02:00 EST&#39;),(&#39;2020-05-29 02:00 -8&#39;);
+
+select * from tmz;
+           t            
+------------------------
+ 2020-05-29 03:00:00-04
+ 2020-05-29 06:00:00-04
+(2 rows)</code></pre>
+</div>
+
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+</body>
+</html>

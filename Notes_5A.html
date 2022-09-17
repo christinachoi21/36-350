@@ -1,0 +1,353 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+ "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <meta name="generator" content="pandoc" />
+  <meta name="author" content="36-350 – Statistical Computing" />
+  <meta name="font-size-adjustment" content="-1"/>
+  <title>Basic File I/O</title>
+  <style type="text/css">
+    code{white-space: pre-wrap;}
+    span.smallcaps{font-variant: small-caps;}
+    span.underline{text-decoration: underline;}
+    div.column{display: inline-block; vertical-align: top; width: 50%;}
+    div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+    ul.task-list{list-style: none;}
+            pre > code.sourceCode { white-space: pre; position: relative; }
+            pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+            pre > code.sourceCode > span:empty { height: 1.2em; }
+            .sourceCode { overflow: visible; }
+            code.sourceCode > span { color: inherit; text-decoration: inherit; }
+            div.sourceCode { margin: 1em 0; }
+            pre.sourceCode { margin: 0; }
+            @media screen {
+            div.sourceCode { overflow: auto; }
+            }
+            @media print {
+            pre > code.sourceCode { white-space: pre-wrap; }
+            pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+            }
+            pre.numberSource code
+              { counter-reset: source-line 0; }
+            pre.numberSource code > span
+              { position: relative; left: -4em; counter-increment: source-line; }
+            pre.numberSource code > span > a:first-child::before
+              { content: counter(source-line);
+                position: relative; left: -1em; text-align: right; vertical-align: baseline;
+                border: none; display: inline-block;
+                -webkit-touch-callout: none; -webkit-user-select: none;
+                -khtml-user-select: none; -moz-user-select: none;
+                -ms-user-select: none; user-select: none;
+                padding: 0 4px; width: 4em;
+                color: #aaaaaa;
+              }
+            pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+            div.sourceCode
+              {   }
+            @media screen {
+            pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+            }
+            code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+            code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+            code span.at { color: #7d9029; } /* Attribute */
+            code span.bn { color: #40a070; } /* BaseN */
+            code span.bu { } /* BuiltIn */
+            code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+            code span.ch { color: #4070a0; } /* Char */
+            code span.cn { color: #880000; } /* Constant */
+            code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+            code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+            code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+            code span.dt { color: #902000; } /* DataType */
+            code span.dv { color: #40a070; } /* DecVal */
+            code span.er { color: #ff0000; font-weight: bold; } /* Error */
+            code span.ex { } /* Extension */
+            code span.fl { color: #40a070; } /* Float */
+            code span.fu { color: #06287e; } /* Function */
+            code span.im { } /* Import */
+            code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+            code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+            code span.op { color: #666666; } /* Operator */
+            code span.ot { color: #007020; } /* Other */
+            code span.pp { color: #bc7a00; } /* Preprocessor */
+            code span.sc { color: #4070a0; } /* SpecialChar */
+            code span.ss { color: #bb6688; } /* SpecialString */
+            code span.st { color: #4070a0; } /* String */
+            code span.va { color: #19177c; } /* Variable */
+            code span.vs { color: #4070a0; } /* VerbatimString */
+            code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+          </style>
+  <style type="text/css">
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+  </style>
+  <script src="Notes_5A_files/header-attrs-2.11/header-attrs.js"></script>
+  <link href="Notes_5A_files/slidy-2/styles/slidy.css" rel="stylesheet" />
+  <script src="Notes_5A_files/slidy-2/scripts/slidy.js"></script>
+  <script src="Notes_5A_files/slidy_shiny-1/slidy_shiny.js"></script>
+</head>
+<body>
+<div class="slide titlepage">
+  <h1 class="title">Basic File I/O</h1>
+  <p class="author">
+36-350 – Statistical Computing
+  </p>
+  <p class="date">Week 5 – Spring 2022</p>
+</div>
+<div id="formatted-text-files-base-r" class="slide section level1">
+<h1>Formatted Text Files: Base R</h1>
+<p>If your data file is an ASCII (i.e., human-readable) text file . .
+.</p>
+<center>
+<img src="http://www.stat.cmu.edu/~mfarag/350/GalaxyStatistics.png"
+width="400" />
+</center>
+<p>then you will generally use <code>read.table()</code> or
+<code>read.csv()</code>.</p>
+<ul>
+<li><code>read.table()</code>: used with data whose values are separated
+by spaces.</li>
+<li><code>read.csv()</code>: used when you have “comma-separated
+values”</li>
+</ul>
+<p>Other alternatives include <code>read.delim()</code> and
+<code>scan()</code> (for more general formats), along with the
+heretofore often-used <code>readLines()</code> (which simply reads each
+line of a file into an element of a character vector).</p>
+<p>We won’t go into binary (i.e., non-human-readable) files, as how to
+read in their data can be highly domain specific. To get a handle on how
+you might proceed if a binary reader has not already been coded for you,
+see the help page for <code>connections</code>.</p>
+</div>
+<div id="formatted-text-files-base-r-1" class="slide section level1">
+<h1>Formatted Text Files: Base R</h1>
+<center>
+<img src="http://www.stat.cmu.edu/~mfarag/350/read.table.png"
+width="600" />
+</center>
+<p>Beware the arguments!</p>
+<ul>
+<li><code>header</code> provides column names, and is <code>FALSE</code>
+by default for <code>read.table()</code></li>
+<li><code>stringsAsFactors</code> is default <code>TRUE</code> and will
+lead to your character string vector being treated as a factor
+variable</li>
+<li><code>na.strings</code> is <code>NA</code> by default, but beware:
+domain scientists use many symbols and/or numbers to indicate that data
+are missing (like -99)</li>
+</ul>
+<p>Useful arguments:</p>
+<ul>
+<li><code>skip</code>: if there are lines of metadata preceding the
+first line of data, use <code>skip</code> to skip over them.</li>
+</ul>
+<p>Side effects:</p>
+<ul>
+<li>If your column name has white spaces, <code>read.table()</code> and
+<code>read.csv()</code> will fill them in with periods.</li>
+</ul>
+</div>
+<div id="formatted-text-files-readr" class="slide section level1">
+<h1>Formatted Text Files: readr</h1>
+<p>Faster alternatives to base <code>R</code> functions are provided by
+the <code>readr</code> package, which as you might guess is part of the
+tidyverse.</p>
+<ul>
+<li><code>read.table()</code> -&gt; <code>read_table()</code> and
+<code>read.csv()</code> -&gt; <code>read_csv()</code></li>
+<li><strong>NOTE:</strong> <code>read_table()</code> can do a bad job of
+parsing data; consider <code>read_delim()</code> instead</li>
+<li>keeps variable names as is</li>
+<li>columns of strings are read in as character vectors, but you can use
+the <code>col_types</code> argument to specify specific types, such as
+factor, to override the default identifications</li>
+<li>reads data into a tibble, which you may (or may not) want to cast to
+a data frame</li>
+</ul>
+<div class="sourceCode" id="cb1"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(readr)</span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>file.url <span class="ot">=</span> <span class="fu">url</span>(<span class="st">&quot;http://www.stat.cmu.edu/~mfarag/350/GalaxyStatistics.txt&quot;</span>) <span class="co"># see &quot;connections&quot;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">read_delim</span>(file.url,<span class="at">delim=</span><span class="st">&quot; +&quot;</span>) <span class="sc">%&gt;%</span> <span class="fu">head</span>(<span class="dv">3</span>)</span></code></pre></div>
+<pre><code>## 
+## -- Column specification --------------------------------------------------------
+## cols(
+##   Field = col_character(),
+##   Gini = col_double(),
+##   Concentration = col_double()
+## )</code></pre>
+<pre><code>## # A tibble: 3 x 3
+##   Field   Gini Concentration
+##   &lt;chr&gt;  &lt;dbl&gt;         &lt;dbl&gt;
+## 1 COSMOS 0.505          3.58
+## 2 COSMOS 0.433          3.10
+## 3 COSMOS 0.288          2.28</code></pre>
+<p>Click <a
+href="https://rawgit.com/rstudio/cheatsheets/master/data-import.pdf">here</a>
+for more information than you could possibly ever need about
+<code>readr</code>.</p>
+</div>
+<div id="reading-excel-files-readxl" class="slide section level1">
+<h1>Reading Excel Files: readxl</h1>
+<p><code>readxl</code> is yet another tidyverse-related package for
+reading data directly from EXCEL spreadsheets with either
+<code>xls</code> or <code>xlsx</code> extensions. (Note: does not yet,
+by all appearances, cleanly load non-local files!)</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">require</span>(readxl)</span></code></pre></div>
+<pre><code>## Loading required package: readxl</code></pre>
+<div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="fu">readxl_example</span>()</span></code></pre></div>
+<pre><code>##  [1] &quot;clippy.xls&quot;    &quot;clippy.xlsx&quot;   &quot;datasets.xls&quot;  &quot;datasets.xlsx&quot;
+##  [5] &quot;deaths.xls&quot;    &quot;deaths.xlsx&quot;   &quot;geometry.xls&quot;  &quot;geometry.xlsx&quot;
+##  [9] &quot;type-me.xls&quot;   &quot;type-me.xlsx&quot;</code></pre>
+<div class="sourceCode" id="cb8"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>(<span class="at">tbl =</span> <span class="fu">read_excel</span>(<span class="fu">readxl_example</span>(<span class="st">&quot;clippy.xls&quot;</span>)))</span></code></pre></div>
+<pre><code>## # A tibble: 4 x 2
+##   name                 value              
+##   &lt;chr&gt;                &lt;chr&gt;              
+## 1 Name                 Clippy             
+## 2 Species              paperclip          
+## 3 Approx date of death 39083              
+## 4 Weight in grams      0.90000000000000002</code></pre>
+<p>You can specify four column types: <code>skip</code>,
+<code>numeric</code>, <code>date</code>, and <code>text</code>.</p>
+<p><code>skip</code> allows you to ignore a column:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>(<span class="at">tbl =</span> <span class="fu">read_excel</span>(<span class="fu">readxl_example</span>(<span class="st">&quot;clippy.xls&quot;</span>),<span class="at">col_types=</span><span class="fu">c</span>(<span class="st">&quot;text&quot;</span>,<span class="st">&quot;skip&quot;</span>))) <span class="co"># ignore second column</span></span></code></pre></div>
+<pre><code>## # A tibble: 4 x 1
+##   name                
+##   &lt;chr&gt;               
+## 1 Name                
+## 2 Species             
+## 3 Approx date of death
+## 4 Weight in grams</code></pre>
+</div>
+<div id="writing-files-base-r" class="slide section level1">
+<h1>Writing Files: Base R</h1>
+<p>As you might expect, <code>read.table()</code> and
+<code>read.csv()</code> have analogous write functions:
+<code>write.table()</code> and <code>write.csv()</code>. The two main
+arguments to look out for are:</p>
+<ul>
+<li><code>quote</code>: default <code>TRUE</code>…it puts double quotes
+around your column (and row) names. Set this to <code>FALSE</code>.</li>
+<li><code>row.names</code>: default <code>TRUE</code>…which means, if
+you don’t have row names in your data frame, you’ll have
+<code>"1"</code>, <code>"2"</code>, etc. as the row names in your
+output. Also set this to <code>FALSE</code> if you don’t have row names
+already.</li>
+</ul>
+</div>
+<div id="writing-files-readr" class="slide section level1">
+<h1>Writing Files: readr</h1>
+<p>Surprisingly, there is no <code>write_table()</code> function in
+<code>readr</code>; one can use <code>write_delim()</code> instead:</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">write_delim</span>(df,<span class="st">&quot;./df.txt&quot;</span>) <span class="co"># write the data frame df to the local file df.txt</span></span></code></pre></div>
+<p>By default, there are no quotes around the column names and no row
+names generated from the aether!</p>
+<p>There is a <code>write_csv()</code> function for comma-separated
+values.</p>
+<p>For EXCEL spreadsheets: use <code>write_excel_csv</code>.</p>
+</div>
+<div id="storing-r-objects-save-and-load" class="slide section level1">
+<h1>Storing R Objects: Save and Load</h1>
+<p>One can save <code>R</code> objects (vectors, data frames, etc.) in a
+binary format, so as to be loaded later:</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>x <span class="ot">=</span> <span class="dv">5</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>y <span class="ot">=</span> <span class="fu">list</span>(<span class="at">a=</span><span class="dv">1</span><span class="sc">:</span><span class="dv">2</span>,<span class="at">b=</span><span class="cn">TRUE</span>)</span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">save</span>(x,y,<span class="at">file=</span><span class="st">&quot;tmp.Rdata&quot;</span>)</span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">rm</span>(x,y)</span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">gc</span>()</span></code></pre></div>
+<pre><code>##           used (Mb) gc trigger  (Mb) max used (Mb)
+## Ncells 1076702 57.6    2092502 111.8  1778466 95.0
+## Vcells 1886070 14.4    8388608  64.0  3106604 23.8</code></pre>
+<div class="sourceCode" id="cb15"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="fu">load</span>(<span class="st">&quot;tmp.Rdata&quot;</span>)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>x</span></code></pre></div>
+<pre><code>## [1] 5</code></pre>
+<div class="sourceCode" id="cb17"><pre class="sourceCode r"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>y</span></code></pre></div>
+<pre><code>## $a
+## [1] 1 2
+## 
+## $b
+## [1] TRUE</code></pre>
+<p>Note the following:</p>
+<ul>
+<li>The suffixes <code>Rdata</code> and <code>Rda</code> are
+interchangable</li>
+<li>There is a <code>saveRDS()</code> function which saves <em>one</em>
+<code>R</code> object in a file with suffix <code>Rds</code>…this object
+may be given a new name when read in with <code>readRDS()</code></li>
+</ul>
+</div>
+
+  <!-- dynamically load mathjax for compatibility with self-contained -->
+  <script>
+    (function () {
+      var script = document.createElement("script");
+      script.type = "text/javascript";
+      script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+      document.getElementsByTagName("head")[0].appendChild(script);
+    })();
+  </script>
+
+</body>
+</html>
